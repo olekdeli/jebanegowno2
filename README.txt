@@ -18,7 +18,9 @@ What to do if i want to have a one course, but two groups? (Like a class of Inte
 Is there a history about u3a activities kept?
     Each course, once completed, is added to the list of completed courses,
     and its students move the course from the list of active courses to the 
-    completed ones. Students cannot be enrolled or unenrolled in a completed course
+    completed ones. Students cannot be enrolled or unenrolled in a completed course.
+    Moreover, any action that changes the system state is saved as a "log" and 
+    can be displayed via option no. 12
 
 
 
@@ -85,15 +87,7 @@ An explanation to the main interface of the programme:
     cannot be modified, are not displayed in the set of active 
     courses, but are moved to the set of completed courses
 
+12.Check logs(history)
 
-
-uwagi:
-add history
-
-zrbo checki czy kurs nie jest ukonczony
-
-dodaj statusy do ucznia (wyjebany, uczeszczajacy, bierny)
-nauczycieka (wyjebany, uczeszczajacy, bierny)
-kursu (skonczony, przerwany, trwajacy)
-
-zamien student jako nazwa variable na Student bo nie pojdzie
+    Rvery action that affects the state of affairs 
+    of the system is recorded and stored under this option

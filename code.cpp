@@ -1327,4 +1327,15 @@ void u3a::log(const char* info){
     }
 }
 
-//take_up
+void u3a::find_and_delete(u3a::course* Course){
+    classroom* currptr= get_pHead_classroom();
+         
+    while(currptr!=nullptr){
+        for(int i=0;i!=240;i++){
+            if(currptr->get(i)==Course){
+                currptr->set(i,nullptr);
+            }
+        }
+        currptr=currptr->get_next();
+    }
+}

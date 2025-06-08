@@ -334,6 +334,8 @@ void complete(teacher* tea, course* c);
 
     u3a::datalog* get_pHead_datalog();
 
+    void find_and_delete(u3a::course* Course);
+
     u3a::classroom* get_pHead_classroom();
     private:
 

@@ -17,7 +17,7 @@ std::cerr<<"8.(Add/Remove) a lecturer (to/from) a course\n";
 std::cerr<<"9.Print student list of a course\n";
 std::cerr<<"10.Add a timetable and a classroom to an instance of a course\n";
 std::cerr<<"11.Mark a course as finished\n"; 
-std::cerr<<"12.Check history of a (student/teacher/course)\n"; 
+std::cerr<<"12.Check logs (history)\n"; 
 //std::cerr<<"97.Save current database into txt file (in development)\n98.Import data from the txt file (in development)\n";
 std::cerr<<"0./Exit the programme\n";
 
@@ -70,7 +70,7 @@ case 1:{
         uni->append_conduct(uni->findTeacherById(id_l)->get_teacher(),uni->insert_new_course(name, id_l, capacity));
         } 
     }
-    sys_break();
+    
     break;
 }            
 
@@ -78,8 +78,8 @@ case 2:{
     std::cerr<<"\nPick:\n1.Enroll\n2.Deroll\n0./Return\n->";
     int choice2= ask_int();
 
-    if(choice2==0){break;}
-
+    if(choice2!=1 && choice2!=2){break;}
+    
     std::cerr<<"Provide id of a student\n->";
     int id_s=ask_int(); 
     std::cerr<<"Input id of the course\n->";
@@ -131,7 +131,7 @@ case 3:{
     std::cerr<<"Print list of ...\n1.Students\n2.Teachers\n3.Courses\n0./Return\n->";
     choice2 = ask_int();
 
-        if(choice2==0) break;
+        if(choice2<1||choice2>3) break;
         if(choice2==1){
             u3a::node_s* currptr = uni->get_pHead_student();
             if(currptr==nullptr){std::cerr<<"Empty list\n";} else cleanscreen();
@@ -191,7 +191,7 @@ case 5:{
     std::cerr<<"Print details about...\n1.Student\n2.Teacher\n3.Course\n0./Return\n";
     choice2=ask_int();
 
-    if(choice2==0){break;}
+    if(choice2<1||choice2>3){break;}
 
     if(choice2==1){
         std::cerr<<"Provide student ID:\n->";
@@ -252,9 +252,9 @@ case 6:{ //delete a student/teacher/course
     int choice2=ask_int();
     
 
-    if(choice2==0){break;}
+    if(choice2<1||choice2>3){break;}
 
-    if(choice2==1){
+    if(choice2==1){ //deleting a student
         std::cerr<<"Input student's id:\n->";
         int id = ask_int();
         if(uni->findStudById(id)==nullptr)
@@ -267,18 +267,8 @@ case 6:{ //delete a student/teacher/course
         while(Student->get_courses()!=nullptr){
             uni->deroll_student(id,Student->get_courses()->get_course());
         }
-
-
-        //Remove a student from the stack
+        uni->log(combine_strings("Removed a student(id:",Student->get_id(),")"));
         uni->remove_from_pHead_student(Student);
-
-        //Remove student from completed courses history
-
-
-
-        //find student
-        //remove student
-
     }
 
     if(choice2==2){
@@ -287,23 +277,39 @@ case 6:{ //delete a student/teacher/course
         if(uni->findTeacherById(id)==nullptr){std::cerr<<"Invalid id";break;}
         u3a::teacher* Teacher = uni->findTeacherById(id)->get_teacher();
 
-        //Check all courses if he teaches anything and delete him
-        u3a::node_c* currptr= Teacher->get_courses_conducted();
+        u3a::node_c* currptr = Teacher->get_courses_conducted();
+        int m5s = 0;
+        while(currptr!=nullptr){
+            if(currptr->get_course()->get_lecturer()->get_next()==nullptr){
+                std::cerr<<"Deleting this teacher would result in a course not having a lecturer (which is forbidden).\nAdd a different lecturer to that course to delete this one\n";
+                m5s=1;
+                sys_break();
+                break;
+                
+            }
+            currptr=currptr->get_next();
+        }
+        if(m5s){break;}
+            
+            //Check all courses if he teaches anything and delete him
+        currptr= Teacher->get_courses_conducted();
         while(currptr!=nullptr){
             uni->remove_lecturer(uni->findTeacherById(id)->get_teacher(), currptr->get_course());
             currptr=currptr->get_next();
         }
+        uni->log(combine_strings("Removed a Teacher(id:",Teacher->get_id(),")"));
         uni->remove_from_pHead_teacher(Teacher);
         break;
     }
 
-    if(choice2==3){ //works
+    if(choice2==3){ //delete a course
         std::cerr<<"Input course's id:\n->";
         int id = ask_int();
         if(uni->findCourseById(id)==nullptr){std::cerr<<"Invalid id";break;}
         if(uni->findCourseById(id)->get_course()->get_status()==1){std::cerr<<"This course has already finished. Modification forbidden.\n";sys_break();break;}
         u3a::course* Course = uni->findCourseById(id)->get_course();
-
+        uni->log(combine_strings("Removed a course(id:",Course->get_id(),")"));
+        uni->find_and_delete(Course);
         //Delete lecturers
             while(Course->get_lecturer()!=nullptr){
                 uni->remove_lecturer(Course->get_lecturer()->get_teacher(), Course);
@@ -325,7 +331,7 @@ case 7:{
     std::cerr<<"Pick...\n1.Create a new course group\n2.Append a course to an existing group\n3.Remove a course from a group\n4.Delete a course group\n5.Print groups\n0./Return\n\n->";
     int choice2 = ask_int();
 
-    if(choice2==0){break;}
+    if(choice2<1||choice2>5){break;}
 
     if(choice2==5){ //printing
         u3a::grouper* currptr = uni->get_pHead_grouper();
@@ -512,7 +518,7 @@ case 8:{ //Add/remove lecturer from a course
     std::cerr<<"...\n1.Add a lecturer\n2.Remove a lecturer\n0./Return\n->";
     int choice2 = ask_int();
 
-    if(choice2==0){break;}
+    if(choice2<1||choice2>2){break;}
 
     std::cerr<<"\nInput teacher's id\n->";
     int id_l = ask_int(); 
@@ -573,9 +579,9 @@ case 9:{
 }
 
 case 10:{
-    std::cerr<<"Pick...\n1.Add a new classroom\n2.Remove a classroom\n3.Schedule new activity for a classroom\n4.Print details for a classroom\n5.Print all classrooms\n0./Return\n\n->";
+    std::cerr<<"Pick...\n1.Add a new classroom\n2.Remove a classroom\n3.Schedule new activity for a classroom\n4.Print details for a classroom\n5.Print all classrooms\n6.Change the hours of classes to \"free\"\n0./Return\n\n->";
     int choice2 = ask_int();
-    if(choice2==0){break;}
+    if(choice2<1||choice2>6){break;}
     if(choice2==1){
         uni->append_classroom();
     }
@@ -690,6 +696,7 @@ case 10:{
             int choice3 = ask_int();
             if(choice3>5 || choice3<1)throw u3a::unexpectedIdException(642);
 
+            cleanscreen();
             if(choice3==1){std::cerr<<"Monday:\n";}
             if(choice3==2){std::cerr<<"Tuesday:\n";}
             if(choice3==3){std::cerr<<"Wednesday:\n";}
@@ -714,7 +721,52 @@ case 10:{
             sys_break(); break;
         }
     }
-break;}
+    if(choice2==6){//Free up timetable
+        try{
+            std::cerr<<"Which classroom are you trying to reserve? Provide id\n\n->";
+            int idcr = ask_int();
+            if(uni->check_if_cr_exist(idcr)==0) throw u3a::unexpectedTimeException(-2);
+
+            std::cerr<<"Select day of the week\n1.Monday\n2.Tuesday\n3.Wednesday\n4.Thursday\n5.Friday\n\n->";
+            int day = ask_int();
+            if(day<1 || day>5) throw u3a::unexpectedTimeException(-1);
+
+            std::cerr<<"Select the starting HOUR (from 8 - 20)...\n8. 8\n9. 9\n10.10\n11.11\n12.12\netc...\n\n->";
+            int hour1 = ask_int();
+            if(hour1<8 || hour1>20) throw u3a::unexpectedTimeException(0);
+            std::cerr<<"Select the starting quadrant...\n0.xx:00\n1.xx:15\n2.xx:30\n3.xx:45\n\n->";
+            int minq1 = ask_int();
+            if(minq1<0 || minq1>3) throw u3a::unexpectedTimeException(0);
+            
+            std::cerr<<"Select the ending HOUR (from 8 - 20)...\n8. 8\n9. 9\n10.10\n11.11\n12.12\netc...\n\n->";
+            int hour2 = ask_int();
+            if(hour2<8 || hour2>20) throw u3a::unexpectedTimeException(1);
+            std::cerr<<"Select the ending quadrant...\n0.xx:00\n1.xx:15\n2.xx:30\n3.xx:45\n\n->";
+            int minq2 = ask_int();
+            if(minq2<0 || minq2>3) throw u3a::unexpectedTimeException(1);
+            
+            int index1 = (day-1)*48 + (hour1-8)*4 + minq1;
+            int index2 = (day-1)*48 + (hour2-8)*4 + minq2;
+
+            if(index1>=index2) throw u3a::unexpectedTimeException(2);
+            //Un-occupy
+
+            for(int i= index1; i!=index2;i++){
+                uni->findCrById(idcr)->set(i,nullptr);
+            }
+            break;
+        }
+        catch(u3a::unexpectedTimeException& e){
+            if(e.i==-2)std::cerr<<"No such classroom\n";
+            if(e.i==-1)std::cerr<<"Wrong day selected\n";
+            if(e.i==0) std::cerr<<"Wrong Starting time given\n";
+            if(e.i==1) std::cerr<<"Wrong Ending time given\n";
+            if(e.i==2) std::cerr<<"Ending time can't be earlier than starting time\n";
+            sys_break(); break;
+        }
+    }
+break;
+}
 
 case 11:{
     try{
