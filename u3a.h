@@ -189,7 +189,7 @@ void complete(teacher* tea, course* c);
 
     class node_s{
         public:
-            node_s(student* student);
+            node_s(student* Student);
             ~node_s();
             node_s* get_next();
             student* get_student();
@@ -199,7 +199,7 @@ void complete(teacher* tea, course* c);
             int get_id();
             void print_all();
         private:
-            student* student;
+            student* Student;
             node_s* next;
     };
 
@@ -218,7 +218,7 @@ void complete(teacher* tea, course* c);
             void set_teacher(teacher* Teacher);
             int get_id();
         private:
-            teacher* teacher;
+            teacher* Teacher;
             node_t* next;
     };
     void set_next(u3a::teacher* Teacher, u3a::teacher* target);
@@ -236,7 +236,7 @@ void complete(teacher* tea, course* c);
             void set_course(course* Course);
             int get_id();
         private:
-            course* course;
+            course* Course;
             node_c* next;
     };
 

@@ -44,7 +44,7 @@ u3a::course::course(int id, char* name, teacher* lecturer,int capacity){
 }
 u3a::course::~course(){delete[] course_name;}
 
-u3a::node_s::node_s(u3a::student* student){this->student = student;this->next = nullptr;}
+u3a::node_s::node_s(u3a::student* Student){this->Student = Student;this->next = nullptr;}
 u3a::node_s::~node_s(){}
 
 
@@ -70,7 +70,7 @@ u3a::node_t* u3a::course::get_lecturer(){return this->lecturer;}
 u3a::node_c* u3a::get_pHead_course(){return this->pHead_course;}
 //node_s
 u3a::node_s* u3a::node_s::get_next(){return this->next;}
-u3a::student* u3a::node_s::get_student(){return this->student;}
+u3a::student* u3a::node_s::get_student(){return this->Student;}
 
 
 //Setters -------------------------------------------
@@ -101,9 +101,9 @@ u3a::node_s* u3a::node_of(u3a::student* Student){
     std::cerr<<"No such student cell found";
     return nullptr;
 }
-int u3a::node_s::get_id(){return this->student->get_id();}
+int u3a::node_s::get_id(){return this->Student->get_id();}
 void u3a::node_s::set_next(u3a::node_s* next){this->next = next;}
-void u3a::node_s::set_student(u3a::student* Student){this->student = Student;}
+void u3a::node_s::set_student(u3a::student* Student){this->Student = Student;}
 
     //Adders -------------------------------------------
 
@@ -427,7 +427,7 @@ void u3a::course::print_course(){
     std::cerr<<"Capacity: "<<this->get_student_count()<<"/"<<this->get_capacity()<<"\n\n";}
 
 void u3a::node_s::print_student(){
-    std::cerr<<"\nSTUDENT INFO:\nId: "<<student->get_id()<<"\nAge: "<<student->get_age()<<"\nName: "<<student->get_name()<<"\n\n";}
+    std::cerr<<"\nSTUDENT INFO:\nId: "<<Student->get_id()<<"\nAge: "<<Student->get_age()<<"\nName: "<<Student->get_name()<<"\n\n";}
 void u3a::course::print_student_list(){ this->get_studentPHead()->print_all();}
 
 void u3a::course::set_studentPHead(u3a::node_s* node){this->student_list = node;}
@@ -456,7 +456,7 @@ u3a::node_t* u3a::node_of(u3a::teacher* Teacher){
     return nullptr;
 }
 u3a::node_t::node_t(u3a::teacher* Teacher){
-    this->teacher = Teacher;
+    this->Teacher = Teacher;
     this->next = nullptr;
 }
 u3a::node_t::~node_t(){}
@@ -464,19 +464,19 @@ u3a::node_t* u3a::node_t::get_next(){
     return this->next;
 }
 u3a::teacher* u3a::node_t::get_teacher(){
-    return this->teacher;
+    return this->Teacher;
 }
 void u3a::node_t::print_teacher(){
-    this->teacher->print_teacher();
+    this->Teacher->print_teacher();
 }
 void u3a::node_t::set_next(u3a::node_t* node){
     this->next = node;
 }
 void u3a::node_t::set_teacher(u3a::teacher* Teacher){
-    this->teacher = Teacher;    
+    this->Teacher = Teacher;    
 }
 int u3a::node_t::get_id(){
-    return this->teacher->get_id();
+    return this->Teacher->get_id();
 }
 
 /// Node_c core functions
@@ -484,7 +484,7 @@ int u3a::node_t::get_id(){
 
 
 u3a::node_c::node_c(u3a::course* Course){
-    this->course = Course;
+    this->Course = Course;
     this->next = nullptr;
 }
 
@@ -495,20 +495,20 @@ u3a::node_c* u3a::node_c::get_next(){
 }
 
 u3a::course* u3a::node_c::get_course(){
-    return this->course;
+    return this->Course;
 }
 
 void u3a::node_c::print_course(){
-    this->course->print_course();
+    this->Course->print_course();
 }
 
 void u3a::node_c::set_next(node_c* node){
     this->next = node;
 }
 
-void u3a::node_c::set_course(u3a::course* Course){this->course = Course;}
+void u3a::node_c::set_course(u3a::course* Course){this->Course = Course;}
 
-int u3a::node_c::get_id(){return this->course->get_id();}
+int u3a::node_c::get_id(){return this->Course->get_id();}
 
 u3a::node_c* u3a::node_of(u3a::course* Course){
 
